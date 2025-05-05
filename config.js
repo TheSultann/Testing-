@@ -1,30 +1,32 @@
 // config.js
+require('dotenv').config(); // Добавь эту строку для чтения .env ЛОКАЛЬНО (если нужно)
 const { createClient } = require('@supabase/supabase-js');
 
 // --- Константы ---
-const pieTypes = ['Мясо', 'Картошка', 'Сосиска в тесте'];
+const pieTypes = ['Мясо', 'Картошка', 'Сосиска в тесте']; // Изменено
 const currencySymbol = 'сум';
 
-// --- ДОБАВЛЕНО: Список разрешенных Chat ID ---
-// !!! ЗАМЕНИ НА РЕАЛЬНЫЕ ID через запятую, без пробелов !!!
-// В будущем (на Render) это нужно будет перенести в process.env.ALLOWED_CHAT_IDS
-const ALLOWED_CHAT_IDS = '467595754'; // Пример: '12345678,98765432'
+// --- Чтение из переменных окружения ---
+// Render автоматически предоставит эти переменные
+const ALLOWED_CHAT_IDS = process.env.ALLOWED_CHAT_IDS || '64501841'; // Обязательно установи на Render!
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY; // Это anon public ключ
+const token = process.env.TELEGRAM_BOT_TOKEN;
+
+// Проверка, что переменные загружены
+if (!supabaseUrl || !supabaseKey || !token || !ALLOWED_CHAT_IDS) {
+    console.error("!!! КРИТИЧЕСКАЯ ОШИБКА: Не все переменные окружения (SUPABASE_URL, SUPABASE_KEY, TELEGRAM_BOT_TOKEN, ALLOWED_CHAT_IDS) заданы!");
+    process.exit(1); // Завершаем работу, если нет ключей
+}
 
 // --- Подключение к Supabase ---
-// В будущем лучше перенести в переменные окружения (.env)
-const supabaseUrl = 'https://psrwxqpqmbhfbtqlhdjx.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBzcnd4cXBxbWJoZmJ0cWxoZGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYyNDI5MTcsImV4cCI6MjA2MTgxODkxN30.f3dTpEewBwDjgXEu4gNSF77r6c9GTk8ppr8H3AhfIW8';
 const supabase = createClient(supabaseUrl, supabaseKey);
 console.log('Supabase клиент создан (из config.js).');
-
-// --- Настройки Telegram Бота ---
-// В будущем лучше перенести в переменные окружения (.env)
-const token = '7230683241:AAF-v7yXhxe55w27TFYaafURaSsTjtgnGHM';
 
 module.exports = {
     pieTypes,
     currencySymbol,
-    supabase, // Экспортируем готовый клиент supabase
-    token,
-    ALLOWED_CHAT_IDS // Экспортируем список ID
+    supabase,
+    token, // Экспортируем токен, прочитанный из окружения
+    ALLOWED_CHAT_IDS // Экспортируем ID, прочитанные из окружения
 };
