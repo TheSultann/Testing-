@@ -1,9 +1,15 @@
-// bot.js
 const TelegramBot = require('node-telegram-bot-api');
+const express = require('express');
 const config = require('./config');
 const utils = require('./utils'); // Теперь импортируем checkAccess
 const db = require('./db');
 const keyboards = require('./keyboards');
+
+// --- Инициализация HTTP-сервера ---
+const app = express();
+const port = process.env.PORT || 3000;
+app.get('/', (req, res) => res.send('Bot is running'));
+app.listen(port, () => console.log(`Server running on port ${port}`));
 
 // --- Инициализация бота ---
 const bot = new TelegramBot(config.token, { polling: true });
